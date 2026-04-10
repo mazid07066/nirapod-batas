@@ -8,38 +8,40 @@ export function toBanglaDigits(input: string) {
 export function formatBanglaDateManual(dateString: string) {
   const date = new Date(dateString);
 
-  const months = [
-    "জানুয়ারি",
-    "ফেব্রুয়ারি",
-    "মার্চ",
-    "এপ্রিল",
-    "মে",
-    "জুন",
-    "জুলাই",
-    "আগস্ট",
-    "সেপ্টেম্বর",
-    "অক্টোবর",
-    "নভেম্বর",
-    "ডিসেম্বর",
-  ];
+  const formatter = new Intl.DateTimeFormat("bn-BD", {
+    timeZone: "Asia/Dhaka",
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
+    second: "2-digit",
+    hour12: false,
+  });
 
-  const day = toBanglaDigits(String(date.getUTCDate()));
-  const month = months[date.getUTCMonth()];
-  const year = toBanglaDigits(String(date.getUTCFullYear()));
+  const parts = formatter.formatToParts(date);
 
-  const hours = toBanglaDigits(String(date.getUTCHours()).padStart(2, "0"));
-  const minutes = toBanglaDigits(String(date.getUTCMinutes()).padStart(2, "0"));
-  const seconds = toBanglaDigits(String(date.getUTCSeconds()).padStart(2, "0"));
+  const day = parts.find((part) => part.type === "day")?.value || "";
+  const month = parts.find((part) => part.type === "month")?.value || "";
+  const year = parts.find((part) => part.type === "year")?.value || "";
+  const hour = parts.find((part) => part.type === "hour")?.value || "";
+  const minute = parts.find((part) => part.type === "minute")?.value || "";
+  const second = parts.find((part) => part.type === "second")?.value || "";
 
-  return `${day} ${month} ${year}, ${hours}:${minutes}:${seconds} UTC`;
+  return `${day} ${month} ${year}, ${hour}:${minute}:${second} BST`;
 }
 
 export function formatBanglaShortTime(dateString: string) {
   const date = new Date(dateString);
-  const hours = toBanglaDigits(String(date.getUTCHours()).padStart(2, "0"));
-  const minutes = toBanglaDigits(String(date.getUTCMinutes()).padStart(2, "0"));
 
-  return `${hours}:${minutes}`;
+  const formatter = new Intl.DateTimeFormat("bn-BD", {
+    timeZone: "Asia/Dhaka",
+    hour: "2-digit",
+    minute: "2-digit",
+    hour12: false,
+  });
+
+  return formatter.format(date);
 }
 
 export function formatSensorValue(value: number) {
